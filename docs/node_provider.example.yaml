@@ -30,6 +30,10 @@ spec:
         location: "eastus"
         resource-group: "*"
         subscription-id: "*"
+        # Optional BYO VNet overrides:
+        # vcluster.com/vnet-id: "/subscriptions/<subscription>/resourceGroups/<network-rg>/providers/Microsoft.Network/virtualNetworks/<vnet>"
+        # vcluster.com/private-subnet-ids: "/subscriptions/<subscription>/resourceGroups/<network-rg>/providers/Microsoft.Network/virtualNetworks/<vnet>/subnets/<private-a>,/subscriptions/<subscription>/resourceGroups/<network-rg>/providers/Microsoft.Network/virtualNetworks/<vnet>/subnets/<private-b>"
+        # vcluster.com/security-group-id: "/subscriptions/<subscription>/resourceGroups/<network-rg>/providers/Microsoft.Network/networkSecurityGroups/<workers-nsg>"
     - name: standard-d4s-v5
       resources:
         cpu: "4"

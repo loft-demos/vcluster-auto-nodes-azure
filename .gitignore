@@ -1,3 +1,4 @@
 secret.yaml
 /test
 .terraform
+.vscode

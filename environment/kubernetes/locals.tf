@@ -7,8 +7,11 @@ locals {
   node_provider_name = nonsensitive(var.vcluster.nodeProvider.metadata.name)
   suffix             = substr(md5(format("%s%s", local.node_provider_name, local.vcluster_name)), 0, 8)
 
-  security_group_name     = nonsensitive(var.vcluster.nodeEnvironment.outputs.infrastructure["security_group_name"])
-  vcluster_node_client_id = nonsensitive(var.vcluster.nodeEnvironment.outputs.infrastructure["vcluster_node_client_id"])
+  security_group_name                = nonsensitive(var.vcluster.nodeEnvironment.outputs.infrastructure["security_group_name"])
+  security_group_resource_group_name = nonsensitive(var.vcluster.nodeEnvironment.outputs.infrastructure["security_group_resource_group_name"])
+  vnet_name                          = nonsensitive(var.vcluster.nodeEnvironment.outputs.infrastructure["vnet_name"])
+  vnet_resource_group_name           = nonsensitive(var.vcluster.nodeEnvironment.outputs.infrastructure["vnet_resource_group_name"])
+  vcluster_node_client_id            = nonsensitive(var.vcluster.nodeEnvironment.outputs.infrastructure["vcluster_node_client_id"])
 
   ccm_enabled    = nonsensitive(try(tobool(var.vcluster.properties["vcluster.com/ccm-enabled"]), true))
   ccm_lb_enabled = nonsensitive(try(tobool(var.vcluster.properties["vcluster.com/ccm-lb-enabled"]), true))

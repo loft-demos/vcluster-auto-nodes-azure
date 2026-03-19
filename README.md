@@ -155,8 +155,24 @@ You can configure the **NodeProvider** with the following options:
 | ----------------------------- | ------------- | ------------------------------------------------------------------------------------------- |
 | `vcluster.com/ccm-enabled`    | `true`        | Enables deployment of the Cloud Controller Manager.                                         |
 | `vcluster.com/ccm-lb-enabled` | `true`        | Enables the CCM service controller. If disabled, CCM will not create LoadBalancer services. |
-| `vcluster.com/csi-enabled`    | `true`        | Enables deployment of the CSI driver with a `<provider>-default-disk` storage class.                 |
+| `vcluster.com/csi-enabled`    | `true`        | Enables deployment of the CSI driver with a `<provider>-default-disk` storage class.        |
 | `vcluster.com/vpc-cidr`       | `10.5.0.0/16` | Sets the VPC CIDR range. Useful in multi-cloud scenarios to avoid CIDR conflicts.           |
+| `vcluster.com/vnet-id`        | _unset_       | Reuses an existing Azure Virtual Network instead of creating a dedicated one.               |
+| `vcluster.com/private-subnet-ids` | _unset_   | Comma-separated list of private subnet resource IDs used for VM NIC placement. Required for BYO VNet. |
+| `vcluster.com/security-group-id` | _unset_    | Existing Network Security Group resource ID used for worker NICs and CCM. Required for BYO VNet. |
+
+### Bring your own VNet
+
+To reuse an existing Azure network, set `vcluster.com/private-subnet-ids` and
+`vcluster.com/security-group-id`. You can optionally also set
+`vcluster.com/vnet-id` for validation and clearer intent.
+
+`vcluster.com/vnet-id` by itself is not enough to place nodes safely. These
+modules do not try to infer which subnets are private or which NSG should back
+the worker nodes from the VNet alone.
+
+These properties can be provided on the NodeProvider or overridden per vCluster
+through `privateNodes.autoNodes[].properties`.
 
 ## Example
 
@@ -173,6 +189,29 @@ privateNodes:
       vcluster.com/ccm-lb-enabled: "false"
       vcluster.com/csi-enabled: "false"
       vcluster.com/vpc-cidr: "10.15.0.0/16"
+    dynamic:
+    - name: az-cpu-nodes
+      nodeTypeSelector:
+      - property: instance-type
+        operator: In
+        values: ["Standard_D2s_v5", "Standard_D4s_v5", "Standard_D8s_v5"]
+```
+
+### Example: BYO VNet override on a vCluster
+
+```yaml
+controlPlane:
+  service:
+    spec:
+     type: LoadBalancer
+privateNodes:
+  enabled: true
+  autoNodes:
+  - provider: ms-azure
+    properties:
+      vcluster.com/vnet-id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/networking-rg/providers/Microsoft.Network/virtualNetworks/shared-vnet"
+      vcluster.com/private-subnet-ids: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/networking-rg/providers/Microsoft.Network/virtualNetworks/shared-vnet/subnets/private-a,/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/networking-rg/providers/Microsoft.Network/virtualNetworks/shared-vnet/subnets/private-b"
+      vcluster.com/security-group-id: "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/networking-rg/providers/Microsoft.Network/networkSecurityGroups/shared-workers-nsg"
     dynamic:
     - name: az-cpu-nodes
       nodeTypeSelector:

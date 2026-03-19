@@ -9,14 +9,17 @@ module "kubernetes_apply_config" {
   manifest_file = "${path.module}/manifests/cloud-config.yaml.tftpl"
 
   template_vars = {
-    vcluster_name           = local.vcluster_name
-    location                = local.location
-    resource_group_name     = local.resource_group_name
-    subscription_id         = local.subscription_id
-    security_group_name     = local.security_group_name
-    vcluster_node_client_id = local.vcluster_node_client_id
-    node_provider_name      = local.node_provider_name
-    suffix                  = local.suffix
+    vcluster_name                     = local.vcluster_name
+    location                          = local.location
+    resource_group_name               = local.resource_group_name
+    subscription_id                   = local.subscription_id
+    security_group_name               = local.security_group_name
+    security_group_resource_group_name = local.security_group_resource_group_name
+    vnet_name                         = local.vnet_name
+    vnet_resource_group_name          = local.vnet_resource_group_name
+    vcluster_node_client_id           = local.vcluster_node_client_id
+    node_provider_name                = local.node_provider_name
+    suffix                            = local.suffix
   }
 
   computed_fields = ["stringData", "data"]
